@@ -28,8 +28,36 @@ RUN echo -e 'IyBOR0lOWCBTZWN1cmVkIFByb3h5IGluIGEgQm94CiMgTWljaGFlbCBDb2xlbWFuIEA
   && wget -P /etc/yum.repos.d https://cs.nginx.com/static/files/app-protect-signatures-7.repo \
   && yum install -y \
   app-protect-threat-campaigns \
-  app-protect-attack-signatures \
-  && rm -rf /etc/ssl/nginx
+  app-protect-attack-signatures
+  #&& rm -rf /etc/ssl/nginx
+
+# FROM centos:7.4.1708 as proxy
+
+# # nginx
+# COPY --from=build /usr/sbin/nginx /usr/sbin/nginx
+# COPY --from=build /usr/libexec/initscripts/legacy-actions/nginx/ /usr/libexec/initscripts/legacy-actions/nginx/
+# COPY --from=build /etc/logrotate.d/nginx /etc/logrotate.d/nginx
+# COPY --from=build /etc/sysconfig/nginx /etc/sysconfig/nginx
+# COPY --from=build /etc/ssl/nginx/ /etc/ssl/nginx/
+# COPY --from=build /etc/nginx/ /etc/nginx/
+# COPY --from=build /var/cache/nginx/ /var/cache/nginx/
+# COPY --from=build /var/log/nginx/ /var/log/nginx/
+# COPY --from=build /var/lib/nginx/ /var/lib/nginx/
+# COPY --from=build /etc/nginx/modules/ /etc/nginx/modules/
+# # app protect
+# COPY --from=build /etc/app_protect/ /etc/app_protect/
+# COPY --from=build /usr/lib64/ /usr/lib64/
+# COPY --from=build /usr/share/ /usr/share/
+# COPY --from=build /opt/app_protect/ /opt/app_protect/
+# COPY --from=build /var/log/app_protect/ /var/log/app_protect/
+# COPY --from=build /usr/bin/perl /usr/bin/perl
+# # threat campaigns
+# COPY --from=build /etc/yum.repos.d /etc/yum.repos.d
+# COPY --from=build /var/cache/yum/ /var/cache/yum/
+# # user
+# RUN groupadd --system --g 101 nginx \
+#   && adduser --system -g nginx --no-create-home --home /nonexistent --comment "nginx user" --shell /bin/false --uid 101 nginx \
+#   && chown -R nginx:nginx /usr/share/nginx/ /var/log/app_protect/ /opt/app_protect/ 
 
 # Create Entrypoint.sh
 RUN echo -e 'IyEvdXNyL2Jpbi9lbnYgYmFzaAoKaWYgW1sgJFBMQVRGT1JNID0gInBsdXMiIF1dOyB0aGVuCiAgICB5dW0gaW5zdGFsbCBhcHAtcHJvdGVjdC1hdHRhY2stc2lnbmF0dXJlcyAteQogICAgeXVtIGluc3RhbGwgYXBwLXByb3RlY3QtdGhyZWF0LWNhbXBhaWducyAteQogICAgL2Jpbi9zdSAtcyAvYmluL2Jhc2ggLWMgJy9vcHQvYXBwX3Byb3RlY3QvYmluL2JkX2FnZW50ICYnIG5naW54CiAgICAvYmluL3N1IC1zIC9iaW4vYmFzaCAtYyAiL3Vzci9zaGFyZS90cy9iaW4vYmQtc29ja2V0LXBsdWdpbiB0bW1fY291bnQgNCBwcm9jX2NwdWluZm9fY3B1X21oeiAyMDAwMDAwIHRvdGFsX3htbF9tZW1vcnkgMzA3MjAwMDAwIHRvdGFsX3VtdV9tYXhfc2l6ZSAzMTI5MzQ0IHN5c19tYXhfYWNjb3VudF9pZCAxMDI0IG5vX3N0YXRpY19jb25maWcgMj4mMSA+IC92YXIvbG9nL2FwcF9wcm90ZWN0L2JkLXNvY2tldC1wbHVnaW4ubG9nICYiIG5naW54CiAgICAvdXNyL3NiaW4vbmdpbnggLWcgJ2RhZW1vbiBvZmY7JwplbHNlCiAgICAvdXNyL3NiaW4vbmdpbnggLWcgJ2RhZW1vbiBvZmY7JwpmaQ==' | base64 -d > /usr/src/entrypoint.sh \
